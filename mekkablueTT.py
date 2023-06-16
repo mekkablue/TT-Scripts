@@ -58,16 +58,6 @@ def duplicateOffcurvesOnSegment(offCurve):
 		while newOffCurves:
 			path.insertNode_atIndex_(newOffCurves.pop(), insertIndex)
 
-def increaseOffCurves(segment):
-	# segment lacks the last on-curve: segment[-1].nextNode
-	if len(segment)%2 == 0:
-		middleIndex = len(segment)//2
-		middelNode = segment[middleIndex]
-		
-	elif len(segment)%2 == 1:
-		half = len(segment)//2
-		middlePair = segment[half:half+2]
-
 def bezierQ(p1, p2, p3, t):
 	"""
 	Returns coordinates for t (=0.0...1.0) on curve segment.
@@ -81,3 +71,14 @@ def bezierQ(p1, p2, p3, t):
 	y = y1*(1-t)**2 + y2*2*t*(1-t) + y3*t**2
 	return NSPoint(x, y)
 
+def increaseOffCurves(segment):
+	# segment lacks the last on-curve: segment[-1].nextNode
+	middleNode, middlePair = None, None
+	if len(segment)%2 == 0:
+		middleIndex = len(segment)//2
+		middleNode = segment[middleIndex]
+	elif len(segment)%2 == 1:
+		half = len(segment)//2
+		middlePair = segment[half:half+2]
+	
+	# DEV
