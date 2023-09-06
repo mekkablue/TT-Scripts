@@ -39,24 +39,6 @@ def offCurvesAndImpliedOnCurves(segment):
 		coordinates.append(nextNode.position)
 	return coordinates
 
-def duplicateOffcurvesOnSegment(offCurve):
-	path = offCurve.parent
-	segment = segmentOfOffCurve(offCurve)
-	if segment:
-		coordinates = offCurvesAndImpliedOnCurves(segment)
-		newOffCurves = []
-		for i in range(1, len(coordinates)):
-			pos1 = coordinates[i-1]
-			pos2 = coordinates[i]
-			newOffCurve = GSNode()
-			newOffCurve.type = GSOFFCURVE
-			newOffCurve.position = middlePos(pos1, pos2)
-			newOffCurves.append(newOffCurve)
-		lowestIndex = min([n.index for n in segment])
-		path.removeNodes_(segment[1:])
-		insertIndex = path.nodes[lowestIndex].nextNode.index
-		while newOffCurves:
-			path.insertNode_atIndex_(newOffCurves.pop(), insertIndex)
 
 def bezierQ(p1, p2, p3, t):
 	"""
@@ -87,6 +69,29 @@ def decreaseOffCurves(segment):
 	pass
 
 # SAMPLE CODE
+def duplicateOffcurvesOnSegment(offCurve):
+	"""
+	Takes the segment to which offCurve belongs.
+	Duplicates the number of offcurves on the segment, maintaining the shape.
+	"""
+	path = offCurve.parent
+	segment = segmentOfOffCurve(offCurve)
+	if segment:
+		coordinates = offCurvesAndImpliedOnCurves(segment)
+		newOffCurves = []
+		for i in range(1, len(coordinates)):
+			pos1 = coordinates[i-1]
+			pos2 = coordinates[i]
+			newOffCurve = GSNode()
+			newOffCurve.type = GSOFFCURVE
+			newOffCurve.position = middlePos(pos1, pos2)
+			newOffCurves.append(newOffCurve)
+		lowestIndex = min([n.index for n in segment])
+		path.removeNodes_(segment[1:])
+		insertIndex = path.nodes[lowestIndex].nextNode.index
+		while newOffCurves:
+			path.insertNode_atIndex_(newOffCurves.pop(), insertIndex)
+
 def increaseFromTwoToThreeOffcurves(p1, p2, p4, p5):
 	"""
 	p1 = ONCURVE
@@ -110,3 +115,4 @@ def increaseFromTwoToThreeOffcurves(p1, p2, p4, p5):
 	# p3 will be the offcurve
 	newP3 = GSIntersectLineLineUnlimited(newP2, impliedOnCurve1, newP4, impliedOnCurve2)
 	return newP1, newP2, newP3, newP4, newP5
+	
