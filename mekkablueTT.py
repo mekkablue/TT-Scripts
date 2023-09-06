@@ -81,4 +81,27 @@ def increaseOffCurves(segment):
 		half = len(segment)//2
 		middlePair = segment[half:half+2]
 	
-	# DEV
+def decreaseOffCurves(segment):
+	# segment[0] is an oncurve, segment[1:] are offcurves
+	# i.e. segment lacks the last oncurve: segment[-1].nextNode
+	pass
+
+# SAMPLE CODE
+def increaseFromTwoToThreeOffcurves(layer):
+	"""
+	Takes a selected segment with two offcurves.
+	Turns it into three offcurves.
+	Adds anchors for visual reference.
+	"""
+	segment = segmentFromSelection(layer)
+	p1, p2, p3, p4, p5 = offCurvesAndImpliedOnCurves(segment)
+	impliedOnCurve1 = bezierQ(p1, p2, p3, 2/3)
+	impliedOnCurve2 = bezierQ(p5, p4, p3, 2/3)
+	newP1 = p1
+	newP2 = twoThirdPos(p1, p2)
+	newP4 = twoThirdPos(p5, p4)
+	newP5 = p5
+	newP3 = GSIntersectLineLineUnlimited(newP2, impliedOnCurve1, newP4, impliedOnCurve2)
+	for i, a in enumerate((newP1, newP2, newP3, newP4, newP5,)):
+		layer.anchors.append(GSAnchor(f"{i:02}", a))
+	
